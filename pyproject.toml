@@ -1,0 +1,77 @@
+[project]
+name = "fastapi-zero"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Arthur Cabral",email = "arthurcabral@hotmail.com.br"}
+]
+readme = "README.md"
+requires-python = ">=3.13, <4.0"
+dependencies = [
+    "fastapi[standard] (>=0.135.2,<0.136.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.15.7,<0.16.0)",
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)",
+    "typos (>=1.44.0,<2.0.0)"
+]
+
+#FORMATAÇÃO DE BOAS PRATICAS
+[tool.ruff] #Configurando a ferramenta
+line-length = 79 #comprimento de linha para 79 caracteres (conforme sugerido na PEP-8)
+extend-exclude = ['migrations'] #diretório de migrações de banco de dados será ignorado na checagem e na formatação
+
+#Durante a análise estática do código, queremos buscar por coisas específicas. No Ruff, precisamos dizer exatamente
+#o que ele deve analisar. Isso é feito por códigos. Usaremos estes:
+#I (Isort): Checagem de ordenação de imports em ordem alfabética
+#F (Pyflakes): Procura por alguns erros em relação a boas práticas de código
+#E (Erros pycodestyle): Erros de estilo de código
+#W (Avisos pycodestyle): Avisos de coisas não recomendadas no estilo de código
+#PL (Pylint): Como o F, também procura por erros em relação a boas práticas de código
+#PT (flake8-pytest): Checagem de boas práticas do Pytest
+#[tool.ruff.lint]
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+
+[tool.typos.files]
+extend-exclude = [
+    "htmlcov",
+    ".venv",
+    "__pycache__",
+    ".pytest_cache"
+]
+
+#Alem formatacao de boas praticas do ruff vamos defino aspas simples como padrao
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+#O Pytest é uma framework de testes, que usaremos para escrever e executar nossos testes.
+#O configuraremos para reconhecer o caminho base para execução dos testes na raiz do projeto .
+#Na segunda linha, dizemos para o pytest adicionar a opção no:warnings. Para ter uma visualização
+#mais limpa dos testes, caso alguma biblioteca exiba uma mensagem de warning, isso será suprimido
+#pelo pytest.
+[tool.pytest.ini_options]
+pythonpath = "."
+addopts = '-p no:warnings'
+
+#Atalhos
+[tool.taskipy.tasks]
+pre_lint = 'typos' #faz a busca por typos de inglês
+lint = 'ruff check'#faz a checagem de boas práticas do código python
+pre_format = 'ruff check --fix' #faz algumas correções de boas práticas automaticamente
+format = 'ruff format' #executa a formatação do código em relação às convenções de estilo de código
+run = 'fastapi dev fastapi_zero/app.py' #executa o servidor de desenvolvimento do FastAPI
+pre_test = 'task lint' #executa a camada de lint antes de executar os testes
+test = 'pytest -s -x --cov=fastapi_zero -vv' #executa os testes com pytest de forma verbosa (-vv) e adiciona nosso código como base de cobertura
+post_test = 'coverage html' #gera um report de cobertura após os testes
