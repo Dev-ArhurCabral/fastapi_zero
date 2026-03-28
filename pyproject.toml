@@ -25,10 +25,10 @@ dev = [
     "typos (>=1.44.0,<2.0.0)"
 ]
 
-#FORMATAÇÃO DE BOAS PRATICAS
+#FORMATAÇÃO DE BOAS PRÁTICAS
+#configurações globais
 [tool.ruff] #Configurando a ferramenta
 line-length = 79 #comprimento de linha para 79 caracteres (conforme sugerido na PEP-8)
-extend-exclude = ['migrations'] #diretório de migrações de banco de dados será ignorado na checagem e na formatação
 
 #Durante a análise estática do código, queremos buscar por coisas específicas. No Ruff, precisamos dizer exatamente
 #o que ele deve analisar. Isso é feito por códigos. Usaremos estes:
@@ -39,16 +39,19 @@ extend-exclude = ['migrations'] #diretório de migrações de banco de dados ser
 #PL (Pylint): Como o F, também procura por erros em relação a boas práticas de código
 #PT (flake8-pytest): Checagem de boas práticas do Pytest
 #[tool.ruff.lint]
+
+# Formatação de linter - correção estática
 [tool.ruff.lint]
 preview = true
 select = ['I', 'F', 'E', 'W', 'PL', 'PT']
 
 [tool.typos.files]
 extend-exclude = [
-    "htmlcov",
-    ".venv",
-    "__pycache__",
-    ".pytest_cache"
+    'htmlcov',
+    '.venv',
+    '__pycache__',
+    '.pytest_cache',
+    'migrations'
 ]
 
 #Alem formatacao de boas praticas do ruff vamos defino aspas simples como padrao
