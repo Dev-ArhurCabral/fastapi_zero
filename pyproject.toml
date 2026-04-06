@@ -31,6 +31,13 @@ dev = [
 #configurações globais
 [tool.ruff] #Configurando a ferramenta
 line-length = 79 #comprimento de linha para 79 caracteres (conforme sugerido na PEP-8)
+exclude = [
+    "migrations",
+    ".venv",
+    "__pycache__",
+    ".pytest_cache",
+    "htmlcov"
+]
 
 #Durante a análise estática do código, queremos buscar por coisas específicas. No Ruff, precisamos dizer exatamente
 #o que ele deve analisar. Isso é feito por códigos. Usaremos estes:
@@ -42,6 +49,7 @@ line-length = 79 #comprimento de linha para 79 caracteres (conforme sugerido na 
 #PT (flake8-pytest): Checagem de boas práticas do Pytest
 #[tool.ruff.lint]
 
+
 # Formatação de linter - correção estática
 [tool.ruff.lint]
 preview = true
@@ -49,11 +57,11 @@ select = ['I', 'F', 'E', 'W', 'PL', 'PT']
 
 [tool.typos.files]
 extend-exclude = [
-    'htmlcov',
-    '.venv',
-    '__pycache__',
-    '.pytest_cache',
-    'migrations'
+    'htmlcov/**',
+    '.venv/**',
+    '__pycache__/**',
+    '.pytest_cache/**',
+    'migrations/**'
 ]
 
 #Alem formatacao de boas praticas do ruff vamos defino aspas simples como padrao
