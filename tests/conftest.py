@@ -40,7 +40,7 @@ def __mock_db_time(*, model, time=datetime(2026, 4, 2)):
         # serve para verificar se um objeto possui determinado atributo.
         if hasattr(target, 'created_at'):
             target.created_at = time
-        if hasattr(target, 'update_at'):
+        if hasattr(target, 'updated_at'):
             target.update_at = time
 
     event.listen(model, 'before_insert', fake_time_hook)
