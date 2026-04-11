@@ -5,22 +5,39 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
 
 from fastapi_zero.app import app
-from fastapi_zero.models import table_registry
+from fastapi_zero.database import get_session
+from fastapi_zero.models import User, table_registry
 
 
+# A injeção de dependência permite que sobrescrevamos a dependência
+# na hora dos testes, na fixture client nos sobrescrevemos a get_session
+# pela fixture session - onde criamos uma sessão em memória
 @pytest.fixture
-def client():
-    # Arrange
-    return TestClient(app)
+def client(session):
+    def get_session_override():
+        return session
+
+    with TestClient(app) as client:
+        app.dependency_overrides[get_session] = get_session_override
+        yield client
+
+    app.dependency_overrides.clear()
 
 
 @pytest.fixture
 def session():
     # engine - cria ums conexão com o banco
     # sqlite - cria um banco em memória
-    engine = create_engine('sqlite:///:memory:')
+    engine = create_engine(
+        'sqlite:///:memory:',
+        # Não precisa verificar se é a mesma thread
+        # Uma thread é uma “tarefa independênte”
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+    )
 
     # abaixo criamos a(as) tabela(s) no banco
     table_registry.metadata.create_all(engine)
@@ -51,3 +68,15 @@ def __mock_db_time(*, model, time=datetime(2026, 4, 2)):
 @pytest.fixture
 def mock_db_time():
     return __mock_db_time
+
+
+@pytest.fixture
+def user(session):
+    user = User(
+        username='Arthur', email='arthur@hotmail.com', password='secret'
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return user

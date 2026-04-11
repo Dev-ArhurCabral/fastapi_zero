@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 # Documantando schema de troca de mensagem
@@ -16,10 +16,7 @@ class UserPublic(BaseModel):
     id: int
     username: str
     email: EmailStr
-
-
-class UserDB(UserSchema):
-    id: int
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserList(BaseModel):
